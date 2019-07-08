@@ -22,6 +22,13 @@ public class SwiftFlutterTtsPlugin: NSObject, FlutterPlugin, AVSpeechSynthesizer
     // Allow audio playback when the Ring/Silent switch is set to silent
     do {
       try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+      if #available(iOS 10.0, *) {
+    try! AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback)
+}
+else {
+    // Workaround until https://forums.swift.org/t/using-methods-marked-unavailable-in-swift-4-2/14949 isn't fixed
+    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+}
       try AVAudioSession.sharedInstance().setActive(true)
     } catch {
       print(error)
