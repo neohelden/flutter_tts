@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -18,12 +19,14 @@ class _MyAppState extends State<MyApp> {
   dynamic voices;
   String language;
   String voice;
+  int silencems;
 
   String _newVoiceText;
 
   TtsState ttsState = TtsState.stopped;
 
   get isPlaying => ttsState == TtsState.playing;
+
   get isStopped => ttsState == TtsState.stopped;
 
   @override
@@ -53,6 +56,7 @@ class _MyAppState extends State<MyApp> {
 
     flutterTts.setCompletionHandler(() {
       setState(() {
+        print("Complete");
         ttsState = TtsState.stopped;
       });
     });
@@ -110,6 +114,17 @@ class _MyAppState extends State<MyApp> {
     return items;
   }
 
+  List<DropdownMenuItem<int>> getSilenceDropDownMenuItems() {
+    var items = List<DropdownMenuItem<int>>();
+    items.add(
+        DropdownMenuItem(value: null, child: Text("No Silence before TTS")));
+    items.add(DropdownMenuItem(
+        value: 1000, child: Text("1 Second Silence before TTS")));
+    items.add(DropdownMenuItem(
+        value: 5000, child: Text("5 Seconds Silence before TTS")));
+    return items;
+  }
+
   void changedLanguageDropDownItem(String selectedType) {
     setState(() {
       language = selectedType;
@@ -121,6 +136,13 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       voice = selectedType;
       flutterTts.setVoice(voice);
+    });
+  }
+
+  void changedSilenceDropDownItem(int selectedType) {
+    setState(() {
+      silencems = selectedType;
+      flutterTts.setSilence(silencems);
     });
   }
 
@@ -143,7 +165,8 @@ class _MyAppState extends State<MyApp> {
                   inputSection(),
                   btnSection(),
                   languages != null ? languageDropDownSection() : Text(""),
-                  voices != null ? voiceDropDownSection() : Text("")
+                  voices != null ? voiceDropDownSection() : Text(""),
+                  Platform.isAndroid ? silenceDropDownSection() : Text("")
                 ]))));
   }
 
@@ -176,12 +199,22 @@ class _MyAppState extends State<MyApp> {
       ]));
 
   Widget voiceDropDownSection() => Container(
-      padding: EdgeInsets.only(top: 50.0),
+      padding: EdgeInsets.only(top: 30.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         DropdownButton(
           value: voice,
           items: getVoiceDropDownMenuItems(),
           onChanged: changedVoiceDropDownItem,
+        )
+      ]));
+
+  Widget silenceDropDownSection() => Container(
+      padding: EdgeInsets.only(top: 30.0),
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        DropdownButton(
+          value: silencems,
+          items: getSilenceDropDownMenuItems(),
+          onChanged: changedSilenceDropDownItem,
         )
       ]));
 

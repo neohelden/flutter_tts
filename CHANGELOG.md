@@ -1,5 +1,22 @@
 # ChangeLog
 
+## 0.6.0
+
+- Android: AndroidX support
+
+## 0.5.2
+
+- Android: Bug Fix on isLanguageAvailable
+
+## 0.5.1
+
+- Applying flutter format to fix health suggestion
+
+## 0.5.0
+
+- Android: Adding silence before speak
+- Android: Removing deprecated API
+
 ## 0.2.6
 
 - IOS: Add voice selection implementation
